@@ -1,0 +1,53 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  tasks:
+
+  - name: Install httpd package
+    yum:
+      name: httpd
+      state: latest
+  - name: start & enable the service
+    service:
+        name: httpd
+        state: started
+        enabled: true
+  - name: Install firewalld package
+    yum: 
+      name: firewalld
+      state: latest
+  - name: start & enable firewalld service
+    service: 
+       name: firewalld
+       state: started
+       enabled: true
+  - name: permit httpd service at firewall
+    firewalld: 
+       service: http
+       permanent: true
+       state: enabled
+       immediate: yes
+  - name: create html web page
+    copy: 
+        dest: /var/www/html/index.html
+        content: "This is my web server\n"
+
+  - name: defining Web Server Name
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      line: ServerName www.client1.example.com:80
+      insertafter: "#ServerName"
+
+  - name: set the hostname
+    hostname: 
+      name: www.client1.example.com
+  - name: update /etc/host file 
+    copy:
+       dest: /etc/hosts
+       content: "192.168.35.164     client1.example.com\n"
+
+  - name: set our DNS Server Name
+    lineinfile:
+        path: /etc/resolv.conf
+        line: 8.8.8.8    google.com

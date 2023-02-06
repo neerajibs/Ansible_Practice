@@ -1,0 +1,49 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  tasks:
+  - name: Wait for the file to be available
+    register: fileexists
+    file:
+      path: /tmp/myprocess.pid
+      state: file
+    until: fileexists is not failed
+    retries: 5
+    delay: 10 
+  - name: notify Slack that the job is failing
+    tags: slack
+    community.general.slack:
+      token: T04LZ44V3U6/B04MVF9AM32/88zWmimPZaAeYmRCjjPnSH7O
+      msg: |
+          ### StatusUpdate ###
+          – ------------------------------------
+          ``
+          `Server`: {{ansible_host}}
+          `Status`: Ansible File Watcher Job failed
+          – ------------------------------------
+      channel: '#ansible-notifications'
+      color: good
+      username: 'Ansible on {{ inventory_hostname }}'
+      link_names: 0
+      parse: 'none'
+    when: fileexists is failed
+    ignore_errors: true
+
+  - name: notify Slack that the job is Successful
+    tags: slack
+    community.general.slack:
+      token: T04LZ44V3U6/B04MVF9AM32/88zWmimPZaAeYmRCjjPnSH7O
+      msg: |
+          ### StatusUpdate ###
+          – ------------------------------------
+          ``
+          `Server`: {{ansible_host}}
+          `Status`: Ansible File Watcher Job Successful.
+          – ------------------------------------
+      channel: '#ansible-notifications'
+      color: good
+      username: 'Ansible on {{ inventory_hostname }}'
+      link_names: 0
+      parse: 'none'
+    when: fileexists is not failed

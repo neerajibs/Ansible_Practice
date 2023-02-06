@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  tasks: 
+  - name: install vsftpd package
+    yum:
+      name: vsftpd
+      state: latest
+  - name: notify Slack that the package is installed
+    tags: slack
+    community.general.slack:
+      token: T0266NX8KPF/B03FHCHAZJM/fk4OApn8KMGilhxxVtQ
+      msg: |
+          ### StatusUpdate ###
+          – ------------------------------------
+          ``
+          `Server`: {{ansible_host}}
+          `Status`: Package is Installed
+          – ------------------------------------
+      channel: '#ansible-notifications'
+      color: good
+      username: 'Ansible on {{ inventory_hostname }}'
+      link_names: 0
+      parse: 'none'
+      when: fileexists is failed
+      ignore_errors: true

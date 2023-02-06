@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  tasks:
+
+    - name: install tree package
+      yum:
+           name: tree
+           state: absent

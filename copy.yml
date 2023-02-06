@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  tasks: 
+ 
+    - name: copy a file
+      copy:
+        src: /tmp/abcd
+        dest: /tmp
+        owner: vmuser
+        group: vmuser
+        mode: 777
+      when: ansible_distribution == "CentOs"

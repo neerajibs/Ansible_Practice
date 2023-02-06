@@ -1,0 +1,31 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  tasks:
+
+  - name: create disk partation 
+    parted :
+      device: /dev/sdb
+      number: 1
+      state: present
+      fs_type: ext4
+      part_end: 5GiB 
+
+  - name: format the filesystem
+
+    
+
+    mount:
+    path: /dev/sdb1
+
+
+
+  - name: create disk partation hr
+    parted:
+      device: /dev/sdb
+      number: 2
+      state: present
+      part_end: 2GiB
+      fs_type
+ 

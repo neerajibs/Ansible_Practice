@@ -1,0 +1,28 @@
+---
+- hosts: all
+  become: true
+  become_user: root
+  tasks:
+     - name: install httpd service
+       yum: 
+         name: httpd
+         state: latest
+
+     - name: Enable & start httpd service
+       service:
+         name: httpd
+         state: started
+         enabled: yes
+
+     - name: copy the index.html file
+       copy:
+         src: index.html
+         dest: /var/www/html/index.html
+         src: config file
+         dest: /etc/httpd.conf
+        
+     - name: Allow from firewall
+       firewalld:
+         service: http
+         permanent: yes
+         state: enabled
