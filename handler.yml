@@ -1,0 +1,19 @@
+--- 
+ - name: update SSH Configuration files
+   hosts: all
+   become: yes
+
+
+   tasks:
+     - name: update SSH config
+       lineinfile:  
+         path: /etc/ssh/sshd_config
+         line: "PermitRootLogin no"
+         state: present
+       notify: Restart SSH
+
+   handlers:
+     - name: Restart SSH
+       service: 
+         name: sshd
+         state: restarted
