@@ -1,0 +1,13 @@
+---
+- name: Capture Uptime
+  hosts: all
+
+  tasks:
+    - name: Run uptime command
+      command: uptime
+      register: uptime_result  # Store output in variable
+
+    - name: Show uptime output
+      debug:
+        msg: "current server uptime is Server uptime: {{ uptime_result.stdout }}"
+
